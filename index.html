@@ -73,6 +73,7 @@
     <h2 class="section-title">Scegli il livello</h2>
     <div id="levels" class="levels"></div>
     <div class="menu-foot">
+      <button id="btnScores" class="btn">Punteggi</button>
       <button id="btnHow" class="btn ghost">Come si gioca</button>
       <label class="toggle"><input type="checkbox" id="optAudio"><span>Audio</span></label>
       <label class="toggle"><input type="checkbox" id="optInvert"><span>Comandi invertiti</span></label>
@@ -119,6 +120,38 @@
       </div>
     </div>
     <div class="btns"><button id="howClose" class="btn primary">Ho capito</button></div>
+  </div>
+</section>
+
+<!-- nome del pilota -->
+<section id="nameBox" class="modal hidden">
+  <form id="nameForm" class="panel small" autocomplete="off">
+    <p id="nKicker" class="kicker"></p>
+    <h2>Chi pilota?</h2>
+    <input id="nameInput" class="name-input" type="text" maxlength="20" placeholder="Il tuo nome" aria-label="Nome del pilota" enterkeyhint="go">
+    <p id="nameErr" class="name-err"></p>
+    <div class="btns">
+      <button type="button" id="nameCancel" class="btn ghost">Annulla</button>
+      <button type="submit" class="btn primary">Decolla</button>
+    </div>
+  </form>
+</section>
+
+<!-- storico punteggi -->
+<section id="scores" class="modal hidden">
+  <div class="panel">
+    <h2>Punteggi</h2>
+    <div id="scoreTabs" class="tabs">
+      <button type="button" data-sort="recent">Più recenti</button>
+      <button type="button" data-sort="best">Migliori</button>
+    </div>
+    <div class="table-wrap"><table id="scoreTable" class="score-table"></table></div>
+    <p id="scoreEmpty" class="hint">Ancora nessuna partita: scegli un livello e vola.</p>
+    <div class="btns">
+      <button id="scDownload" class="btn primary">Scarica punteggi.txt</button>
+      <button id="scClear" class="btn ghost">Cancella storico</button>
+      <button id="scClose" class="btn">Chiudi</button>
+    </div>
   </div>
 </section>
 

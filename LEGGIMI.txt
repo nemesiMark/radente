@@ -33,6 +33,11 @@ PUNTI
 - Turbo: i punti di rischio valgono una volta e mezza
 - Se tocchi terra, acqua, lava o un ostacolo, o resti fuori rotta per 5 secondi, il volo finisce.
 
+Pilota e punteggi: prima di ogni partita dal menu il gioco chiede il nome del pilota (propone l'ultimo usato;
+Riprova e Livello successivo tengono lo stesso pilota). Ogni partita, arrivata o schiantata, finisce nello storico:
+pulsante «Punteggi» nel menu (ordinati per recenti o migliori) e «Scarica punteggi.txt» per avere il file di testo
+con tutte le partite e i 5 migliori per livello. Lo storico sta nel browser in cui si gioca (ne tiene fino a 3000).
+
 Stelle: 1 se arrivi al traguardo; 2 e 3 se superi due soglie di punti (la terza richiede di rischiare davvero).
 Finire un livello sblocca il successivo. Record e stelle restano salvati nel browser.
 
@@ -52,3 +57,5 @@ VERSIONI
 --------
 1.0  (21/11/2026)  Prima versione: 5 livelli, punteggio a rischio, combo, cerchi d'oro, turbo, stelle e record,
                    comandi da tastiera e a tocco, suoni sintetizzati, pilota automatico di prova (#debug).
+1.1  (21/11/2026)  Nome del pilota chiesto prima di ogni partita; storico di tutti i punteggi con pulsante «Punteggi»
+                   nel menu e file punteggi-radente.txt da scaricare.

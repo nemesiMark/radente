@@ -6,7 +6,7 @@ import { makePlane, makeShadow } from './plane.js';
 import { Input } from './input.js';
 import { Sfx } from './audio.js';
 
-export const VERSIONE = '1.0';
+export const VERSIONE = '1.1';
 
 const $ = (id) => document.getElementById(id);
 const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
@@ -23,10 +23,10 @@ const MAX_MULT = 5;
 
 /* ---------- salvataggi ---------- */
 const SAVE_KEY = 'radente.v1';
-const save = { unlocked: 1, best: {}, opts: { audio: true, invert: false, low: isTouch } };
+const save = { unlocked: 1, best: {}, player: '', scores: [], opts: { audio: true, invert: false, low: isTouch } };
 try {
   const s = JSON.parse(localStorage.getItem(SAVE_KEY) || 'null');
-  if (s) { save.unlocked = s.unlocked || 1; save.best = s.best || {}; Object.assign(save.opts, s.opts || {}); }
+  if (s) { save.unlocked = s.unlocked || 1; save.best = s.best || {}; save.player = s.player || ''; save.scores = Array.isArray(s.scores) ? s.scores : []; Object.assign(save.opts, s.opts || {}); }
 } catch (e) { /* storage non disponibile */ }
 const persist = () => { try { localStorage.setItem(SAVE_KEY, JSON.stringify(save)); } catch (e) { /* ignora */ } };
 
@@ -456,6 +456,7 @@ function crash(kind) {
   sfx.engine(false, 0, false, 0);
   $('touch').classList.add('hidden');
   message('');
+  recordScore(false, kind, 0);
   setTimeout(() => showResult({ ok: false, kind }), 1500);
 }
 
@@ -477,7 +478,7 @@ function finishLevel() {
   const record = score > prev.score;
   save.best[lvl.id] = { score: Math.max(prev.score, score), stars: Math.max(prev.stars, stars) };
   save.unlocked = Math.min(LEVELS.length, Math.max(save.unlocked, levelIdx + 2));
-  persist();
+  recordScore(true, '', stars);
   sfx.finish();
   $('touch').classList.add('hidden');
   message('');
@@ -485,9 +486,10 @@ function finishLevel() {
 }
 
 function showResult(r) {
+  if (mode !== 'crashed' && mode !== 'finished') return;
   const lvl = LEVELS[levelIdx];
   $('result').classList.remove('hidden');
-  $('rKicker').textContent = `Livello ${levelIdx + 1} · ${lvl.name}`;
+  $('rKicker').textContent = `${save.player} · Livello ${levelIdx + 1} · ${lvl.name}`;
   $('rTitle').textContent = r.ok ? 'Traguardo!' : (CRASH_TXT[r.kind] || 'Schianto');
   const st = $('rStars');
   st.innerHTML = r.ok ? [0, 1, 2].map((i) => `<span class="${i < r.stars ? '' : 'off'}">★</span>`).join('') : '';
@@ -517,7 +519,88 @@ function showResult(r) {
 }
 
 /* ---------- avvio livello / menu ---------- */
-function hideModals() { ['result', 'pause', 'how'].forEach((id) => $(id).classList.add('hidden')); }
+function hideModals() { ['result', 'pause', 'how', 'nameBox', 'scores'].forEach((id) => $(id).classList.add('hidden')); }
+
+/* ---------- nome del pilota ---------- */
+let pendingLevel = 0;
+function askName(idx) {
+  pendingLevel = idx;
+  $('nKicker').textContent = `Livello ${idx + 1} · ${LEVELS[idx].name}`;
+  const inp = $('nameInput');
+  inp.value = save.player || '';
+  $('nameErr').textContent = '';
+  $('nameBox').classList.remove('hidden');
+  setTimeout(() => { inp.focus(); inp.select(); }, 30);
+}
+$('nameForm').addEventListener('submit', (e) => {
+  e.preventDefault();
+  const name = $('nameInput').value.replace(/\s+/g, ' ').trim().slice(0, 20);
+  if (!name) { $('nameErr').textContent = 'Scrivi il tuo nome per partire.'; $('nameInput').focus(); return; }
+  save.player = name;
+  persist();
+  $('nameInput').blur();
+  startLevel(pendingLevel);
+});
+$('nameCancel').addEventListener('click', () => $('nameBox').classList.add('hidden'));
+$('nameInput').addEventListener('input', () => { $('nameErr').textContent = ''; });
+
+/* ---------- storico dei punteggi ---------- */
+function recordScore(ok, kind, stars) {
+  const lvl = LEVELS[levelIdx];
+  save.scores.push({
+    d: new Date().toISOString(), n: save.player || 'Senza nome', l: levelIdx + 1, ln: lvl.name,
+    p: Math.round(run.score), s: stars, ok, k: ok ? '' : (CRASH_TXT[kind] || 'Schianto'),
+    c: run.ringsHit, ct: world.rings.length,
+  });
+  if (save.scores.length > 3000) save.scores.splice(0, save.scores.length - 3000);
+  persist();
+}
+const fmtDate = (iso) => { const d = new Date(iso); const z = (n) => String(n).padStart(2, '0'); return `${z(d.getDate())}/${z(d.getMonth() + 1)}/${d.getFullYear()} ${z(d.getHours())}:${z(d.getMinutes())}`; };
+const esc = (t) => String(t).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+let scoreSort = 'recent';
+function renderScores() {
+  const list = save.scores.slice();
+  if (scoreSort === 'best') list.sort((a, b) => (b.ok - a.ok) || (b.p - a.p));
+  else list.reverse();
+  document.querySelectorAll('#scoreTabs button').forEach((b) => b.classList.toggle('on', b.dataset.sort === scoreSort));
+  $('scoreEmpty').classList.toggle('hidden', list.length > 0);
+  $('scoreTable').classList.toggle('hidden', list.length === 0);
+  $('scDownload').disabled = $('scClear').disabled = list.length === 0;
+  $('scoreTable').innerHTML = '<thead><tr><th>Data</th><th>Pilota</th><th>Livello</th><th>Esito</th><th class="r">Punti</th></tr></thead><tbody>' +
+    list.slice(0, 300).map((e) => `<tr class="${e.ok ? '' : 'ko'}"><td>${fmtDate(e.d)}</td><td>${esc(e.n)}</td><td>${e.l} · ${esc(e.ln)}</td><td>${e.ok ? '<span class="stars">' + '★'.repeat(e.s) + '</span>' : esc(e.k)}</td><td class="r">${fmt(e.p)}</td></tr>`).join('') + '</tbody>';
+}
+function scoresTxt() {
+  const pad = (t, n) => String(t).padEnd(n);
+  const lines = [
+    'RADENTE - PUNTEGGI', `Esportato il ${fmtDate(new Date().toISOString())} · ${save.scores.length} partite`, '',
+    [pad('Data', 17), pad('Pilota', 21), pad('Livello', 23), pad('Esito', 28), pad('Cerchi', 8), 'Punti'].join(' '),
+    '-'.repeat(110),
+  ];
+  for (const e of save.scores) {
+    const esito = e.ok ? `Traguardo ${'*'.repeat(e.s)}` : e.k;
+    lines.push([pad(fmtDate(e.d), 17), pad(e.n, 21), pad(`${e.l} ${e.ln}`, 23), pad(esito, 28), pad(`${e.c}/${e.ct}`, 8), fmt(e.p)].join(' '));
+  }
+  lines.push('', 'MIGLIORI PUNTEGGI PER LIVELLO (solo voli arrivati al traguardo)');
+  LEVELS.forEach((l, i) => {
+    const best = save.scores.filter((e) => e.ok && e.l === i + 1).sort((a, b) => b.p - a.p).slice(0, 5);
+    lines.push(`${i + 1} ${l.name}: ` + (best.length ? best.map((e) => `${e.n} ${fmt(e.p)}`).join(' · ') : 'nessuno'));
+  });
+  return lines.join('\r\n') + '\r\n';
+}
+$('btnScores').addEventListener('click', () => { renderScores(); $('scores').classList.remove('hidden'); });
+$('scClose').addEventListener('click', () => $('scores').classList.add('hidden'));
+document.querySelectorAll('#scoreTabs button').forEach((b) => b.addEventListener('click', () => { scoreSort = b.dataset.sort; renderScores(); }));
+$('scDownload').addEventListener('click', () => {
+  const blob = new Blob(['\ufeff' + scoresTxt()], { type: 'text/plain;charset=utf-8' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob); a.download = 'punteggi-radente.txt';
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(a.href), 2000);
+});
+$('scClear').addEventListener('click', () => {
+  if (!confirm('Cancellare tutto lo storico dei punteggi? Record e stelle dei livelli restano.')) return;
+  save.scores = []; persist(); renderScores();
+});
 
 function startLevel(idx) {
   sfx.init();
@@ -535,7 +618,7 @@ function startLevel(idx) {
     autopilot(0, 0);
     plane.visible = true; shadow.visible = true;
     trails.forEach((t) => { t.init = false; t.line.material.opacity = 0; });
-    H.level.textContent = `${idx + 1} · ${world.level.name}`;
+    H.level.textContent = `${save.player} · ${idx + 1} · ${world.level.name}`;
     H.hud.classList.remove('hidden');
     H.popups.innerHTML = '';
     message('');
@@ -586,7 +669,7 @@ function renderCards() {
       <div class="info"><h3>${l.name}</h3><p>${l.mood}</p>
       <div class="meta">${locked ? `<span class="locktxt">${LOCK} Bloccato</span>` : `<span class="stars">${stars}</span><span class="best">${b ? 'Record ' + fmt(b.score) : 'Da giocare'}</span>`}</div></div>`;
     btn.title = locked ? 'Finisci il livello precedente per sbloccarlo' : l.desc;
-    btn.addEventListener('click', () => startLevel(i));
+    btn.addEventListener('click', () => askName(i));
     wrap.appendChild(btn);
   });
 }
@@ -625,9 +708,9 @@ optLow.addEventListener('change', () => { save.opts.low = optLow.checked; persis
 
 input.onKey = (code) => {
   if (code === 'Escape' || code === 'KeyP') {
-    if (!$('how').classList.contains('hidden')) { $('how').classList.add('hidden'); return; }
+    for (const id of ['how', 'nameBox', 'scores']) if (!$(id).classList.contains('hidden')) { if (code === 'Escape') $(id).classList.add('hidden'); return; }
     togglePause();
-  } else if (code === 'KeyR' && ['play', 'paused', 'crashed', 'finished'].includes(mode)) {
+  } else if (code === 'KeyR' && $('nameBox').classList.contains('hidden') && ['play', 'paused', 'crashed', 'finished'].includes(mode)) {
     if (sfx.ctx) sfx.ctx.resume();
     startLevel(levelIdx);
   }
@@ -724,7 +807,7 @@ function tick(dt) {
 
 /* ---------- prova automatica (solo con #debug nell'indirizzo) ---------- */
 if (location.hash.includes('debug')) {
-  window.__R = { tick, input, P, run, world: () => world, mode: () => mode, start: startLevel };
+  window.__R = { tick, input, P, run, save, world: () => world, mode: () => mode, start: startLevel, askName, scoresTxt };
 }
 
 /* ---------- avvio ---------- */

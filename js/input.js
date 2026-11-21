@@ -12,6 +12,8 @@ export class Input {
     this.onKey = null;
 
     addEventListener('keydown', (e) => {
+      const tg = e.target && e.target.tagName;
+      if (tg === 'INPUT' || tg === 'TEXTAREA') { if (e.code === 'Escape' && this.onKey) this.onKey(e.code); return; }
       if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'Space'].includes(e.code)) e.preventDefault();
       if (!e.repeat && this.onKey) this.onKey(e.code);
       this.keys.add(e.code);

@@ -142,6 +142,21 @@ kbd { display: inline-block; min-width: 22px; padding: 1px 6px; border: 1px soli
 .stats dd { margin: 0; font-weight: 800; text-align: right; font-variant-numeric: tabular-nums; }
 .hint { font-size: 13px !important; color: var(--muted) !important; margin: 12px 0 0; }
 
+/* nome e punteggi */
+.name-input { width: 100%; margin-top: 6px; padding: 14px 16px; border-radius: 12px; border: 1px solid var(--line); background: rgba(255,255,255,.07); color: var(--ink); font: 600 20px var(--body); text-align: center; user-select: text; -webkit-user-select: text; outline: none; }
+.name-input:focus { border-color: var(--accent); }
+.name-err { min-height: 1.2em; margin: 8px 0 0; color: var(--bad) !important; font-size: 13px !important; }
+.tabs { display: inline-flex; gap: 4px; padding: 4px; border-radius: 12px; background: rgba(255,255,255,.06); margin-bottom: 12px; }
+.tabs button { border: 0; background: transparent; padding: 7px 14px; border-radius: 9px; font-size: 13px; font-weight: 600; color: var(--muted); }
+.tabs button.on { background: rgba(255,255,255,.14); color: var(--ink); }
+.table-wrap { max-height: 50vh; overflow: auto; border: 1px solid var(--line); border-radius: 12px; touch-action: pan-x pan-y; }
+.score-table { width: 100%; border-collapse: collapse; font-size: 13px; font-variant-numeric: tabular-nums; }
+.score-table th { position: sticky; top: 0; background: #141828; text-align: left; font-weight: 600; color: var(--muted); padding: 9px 12px; }
+.score-table td { padding: 8px 12px; border-top: 1px solid var(--line); white-space: nowrap; }
+.score-table .r { text-align: right; }
+.score-table tr.ko td { color: var(--muted); }
+.btn:disabled { opacity: .45; cursor: default; }
+
 /* ---------- schermi piccoli ---------- */
 @media (max-width: 900px) {
   .levels { grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); }
