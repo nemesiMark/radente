@@ -20,7 +20,7 @@ Dettagli e storico versioni in **LEGGIMI.txt**.
 - Rispondi sempre in italiano; LEGGIMI e commenti in italiano.
 - A ogni modifica: alza `VERSIONE` in `js/main.js` e aggiungi la voce in fondo a LEGGIMI.txt (sezione VERSIONI).
 - Dopo modifiche a percorsi o ostacoli, far girare il pilota automatico (#debug) su tutti i livelli: deve arrivare al traguardo prendendo tutti i cerchi.
-- Non è (ancora) un repository git: commit e push solo su richiesta («g»).
+- Repository: https://github.com/nemesiMark/radente (ramo `main`). Commit e push solo su richiesta («g»).
 
 ## In sospeso
 - Tarare punteggi e soglie delle stelle giocando davvero.
