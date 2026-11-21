@@ -6,7 +6,7 @@ import { makePlane, makeShadow } from './plane.js';
 import { Input } from './input.js';
 import { Sfx } from './audio.js';
 
-export const VERSIONE = '1.1';
+export const VERSIONE = '1.2';
 
 const $ = (id) => document.getElementById(id);
 const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
@@ -565,7 +565,7 @@ function renderScores() {
   document.querySelectorAll('#scoreTabs button').forEach((b) => b.classList.toggle('on', b.dataset.sort === scoreSort));
   $('scoreEmpty').classList.toggle('hidden', list.length > 0);
   $('scoreTable').classList.toggle('hidden', list.length === 0);
-  $('scDownload').disabled = $('scClear').disabled = list.length === 0;
+  $('scDownload').disabled = list.length === 0;
   $('scoreTable').innerHTML = '<thead><tr><th>Data</th><th>Pilota</th><th>Livello</th><th>Esito</th><th class="r">Punti</th></tr></thead><tbody>' +
     list.slice(0, 300).map((e) => `<tr class="${e.ok ? '' : 'ko'}"><td>${fmtDate(e.d)}</td><td>${esc(e.n)}</td><td>${e.l} · ${esc(e.ln)}</td><td>${e.ok ? '<span class="stars">' + '★'.repeat(e.s) + '</span>' : esc(e.k)}</td><td class="r">${fmt(e.p)}</td></tr>`).join('') + '</tbody>';
 }
@@ -597,10 +597,7 @@ $('scDownload').addEventListener('click', () => {
   document.body.appendChild(a); a.click(); a.remove();
   setTimeout(() => URL.revokeObjectURL(a.href), 2000);
 });
-$('scClear').addEventListener('click', () => {
-  if (!confirm('Cancellare tutto lo storico dei punteggi? Record e stelle dei livelli restano.')) return;
-  save.scores = []; persist(); renderScores();
-});
+
 
 function startLevel(idx) {
   sfx.init();

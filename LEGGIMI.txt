@@ -59,3 +59,4 @@ VERSIONI
                    comandi da tastiera e a tocco, suoni sintetizzati, pilota automatico di prova (#debug).
 1.1  (21/11/2026)  Nome del pilota chiesto prima di ogni partita; storico di tutti i punteggi con pulsante «Punteggi»
                    nel menu e file punteggi-radente.txt da scaricare.
+1.2  (21/11/2026)  Tolto il pulsante «Cancella storico»: lo storico dei punteggi non si può cancellare dal gioco.
