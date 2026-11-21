@@ -1,0 +1,4 @@
+.DS_Store
+chat-*.txt
+graphify-out/
+.codegraph/

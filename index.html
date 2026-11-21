@@ -1,0 +1,157 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<meta name="theme-color" content="#0b0f1c">
+<meta name="description" content="Radente: gioco di volo nel browser. Attraversa i cerchi, vola basso, rischia: più rischi, più punti.">
+<title>Radente</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Russo+One&family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 32 32%22%3E%3Crect width=%2232%22 height=%2232%22 rx=%227%22 fill=%22%230b0f1c%22/%3E%3Cpath d=%22M4 18h24M14 12l-3 12M20 14v8%22 stroke=%22%23ffb02e%22 stroke-width=%223%22 stroke-linecap=%22round%22/%3E%3C/svg%3E">
+<link rel="stylesheet" href="style.css">
+<script type="importmap">{ "imports": { "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js" } }</script>
+</head>
+<body>
+<canvas id="gl"></canvas>
+<div id="speedfx"></div>
+<div id="riskfx"></div>
+
+<!-- HUD di gioco -->
+<div id="hud" class="hidden">
+  <div class="hud-top">
+    <div class="hud-box">
+      <span class="lbl">Punti</span>
+      <b id="hScore">0</b>
+      <span id="hMult" class="mult">x1</span>
+    </div>
+    <div class="hud-mid">
+      <div id="hLevel" class="hud-level"></div>
+      <div class="progress"><i id="hProgress"></i></div>
+    </div>
+    <div class="hud-box right">
+      <span class="lbl">Cerchi</span>
+      <b id="hRings">0/0</b>
+      <button id="btnPause" class="icon-btn" aria-label="Pausa"><svg viewBox="0 0 24 24" width="18" height="18"><rect x="6" y="5" width="4" height="14" rx="1"/><rect x="14" y="5" width="4" height="14" rx="1"/></svg></button>
+    </div>
+  </div>
+
+  <div id="popups"></div>
+  <div id="hMsg" class="hud-msg"></div>
+  <div id="marker" class="marker"><span id="mDist"></span></div>
+  <div id="arrow" class="arrow"><svg viewBox="0 0 24 24" width="30" height="30"><path d="M4 12h12M11 6l6 6-6 6" fill="none" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+
+  <div class="hud-bottom">
+    <div class="gauge"><span class="lbl">Velocità</span><b id="hSpeed">0</b><small>km/h</small></div>
+    <div class="risk">
+      <div id="hRiskLbl" class="risk-lbl">Radente</div>
+      <div class="risk-bar"><i id="hRisk"></i></div>
+      <div class="boost"><span class="lbl">Turbo</span><div class="boost-bar"><i id="hBoost"></i></div></div>
+    </div>
+    <div class="gauge"><span class="lbl">Quota</span><b id="hAlt">0</b><small>m</small></div>
+  </div>
+</div>
+
+<!-- comandi a tocco -->
+<div id="touch" class="hidden">
+  <div id="joyZone"></div>
+  <div id="joyBase"><div id="joyKnob"></div></div>
+  <button id="btnBoost" aria-label="Turbo">TURBO</button>
+</div>
+
+<div id="countdown" class="hidden"></div>
+<div id="loading" class="hidden"><span id="loadingTxt">Preparo il volo…</span></div>
+
+<!-- menu -->
+<section id="menu" class="screen">
+  <header class="brand">
+    <h1>RADENTE</h1>
+    <p>Più basso voli, più punti fai.</p>
+  </header>
+  <div class="menu-body">
+    <h2 class="section-title">Scegli il livello</h2>
+    <div id="levels" class="levels"></div>
+    <div class="menu-foot">
+      <button id="btnHow" class="btn ghost">Come si gioca</button>
+      <label class="toggle"><input type="checkbox" id="optAudio"><span>Audio</span></label>
+      <label class="toggle"><input type="checkbox" id="optInvert"><span>Comandi invertiti</span></label>
+      <label class="toggle"><input type="checkbox" id="optLow"><span>Grafica leggera</span></label>
+    </div>
+  </div>
+</section>
+
+<!-- come si gioca -->
+<section id="how" class="modal hidden">
+  <div class="panel">
+    <h2>Come si gioca</h2>
+    <div class="how-grid">
+      <div>
+        <h3>Obiettivo</h3>
+        <p>Attraversa i cerchi nell'ordine seguendo la scia di punti luminosi e arriva al traguardo bianco. Se tocchi terra, acqua, lava o un ostacolo, il volo finisce.</p>
+        <h3>Punti</h3>
+        <ul>
+          <li><b>Cerchio</b> 100 · <b>centro</b> ×2</li>
+          <li><b>Cerchio d'oro</b> 250: più piccolo e più basso</li>
+          <li><b>Combo</b>: ogni cerchio di fila alza il moltiplicatore fino a ×5; se ne manchi uno riparte da ×1</li>
+          <li><b>Volo radente</b>: sotto i 9 m guadagni punti di continuo, più scendi più ne prendi</li>
+          <li><b>Pareti</b> a pochi metri dalle ali: punti extra</li>
+          <li><b>Sfiorare</b> alberi, rocce, palazzi o passare sotto un arco: più ci vai vicino, più vale</li>
+          <li><b>Turbo</b>: i punti di rischio valgono ×1,5</li>
+        </ul>
+      </div>
+      <div>
+        <h3>Computer</h3>
+        <ul>
+          <li><kbd>↑</kbd> <kbd>↓</kbd> o <kbd>W</kbd> <kbd>S</kbd>: sali / scendi</li>
+          <li><kbd>←</kbd> <kbd>→</kbd> o <kbd>A</kbd> <kbd>D</kbd>: vira</li>
+          <li><kbd>Spazio</kbd> o <kbd>Shift</kbd>: turbo</li>
+          <li><kbd>Esc</kbd> o <kbd>P</kbd>: pausa · <kbd>R</kbd>: ricomincia</li>
+        </ul>
+        <h3>Telefono</h3>
+        <ul>
+          <li>Trascina il pollice nella metà sinistra: su e giù per salire e scendere, ai lati per virare</li>
+          <li>Tieni premuto <b>TURBO</b> a destra</li>
+          <li>Meglio con il telefono in orizzontale</li>
+        </ul>
+        <h3>Stelle</h3>
+        <p>Una stella se arrivi al traguardo, due e tre se superi i punteggi indicati alla fine. Finire un livello sblocca il successivo.</p>
+      </div>
+    </div>
+    <div class="btns"><button id="howClose" class="btn primary">Ho capito</button></div>
+  </div>
+</section>
+
+<!-- pausa -->
+<section id="pause" class="modal hidden">
+  <div class="panel small">
+    <h2>Pausa</h2>
+    <div class="btns col">
+      <button id="pResume" class="btn primary">Riprendi</button>
+      <button id="pRestart" class="btn">Ricomincia</button>
+      <button id="pMenu" class="btn ghost">Menu</button>
+    </div>
+  </div>
+</section>
+
+<!-- risultato -->
+<section id="result" class="modal hidden">
+  <div class="panel small">
+    <p id="rKicker" class="kicker"></p>
+    <h2 id="rTitle"></h2>
+    <div id="rStars" class="stars-big"></div>
+    <div id="rScore" class="big-score"></div>
+    <p id="rRecord" class="record hidden">Nuovo record</p>
+    <dl id="rStats" class="stats"></dl>
+    <p id="rHint" class="hint"></p>
+    <div class="btns">
+      <button id="rRetry" class="btn">Riprova</button>
+      <button id="rNext" class="btn primary">Livello successivo</button>
+      <button id="rMenu" class="btn ghost">Menu</button>
+    </div>
+  </div>
+</section>
+
+<script type="module" src="js/main.js"></script>
+</body>
+</html>

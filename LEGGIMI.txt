@@ -1,0 +1,54 @@
+RADENTE
+=======
+
+Gioco di volo 3D che gira nel browser, su computer e su telefono.
+Piloti un piccolo aereo: devi passare dentro i cerchi nell'ordine, seguendo la scia di punti luminosi, fino al traguardo bianco.
+Più rischi, più punti: volare a pochi metri da terra, passare vicino a pareti, alberi, rocce e palazzi, infilarsi sotto gli archi.
+
+
+COME SI PROVA
+-------------
+Nel Terminale:
+  cd ~/Desktop/Apps/radente
+  python3 -m http.server 8123
+poi apri http://localhost:8123 nel browser.
+(Aprire index.html con doppio clic non funziona: serve il piccolo server qui sopra.)
+
+
+COMANDI
+-------
+Computer:  frecce o W A S D per salire, scendere e virare · Spazio o Shift = turbo · Esc o P = pausa · R = ricomincia
+Telefono:  trascina il pollice nella metà sinistra dello schermo (levetta) · tieni premuto TURBO a destra · meglio in orizzontale
+Nel menu: «Comandi invertiti» (su = scendi, come un vero aereo), «Grafica leggera» per telefoni lenti, audio sì/no.
+
+
+PUNTI
+-----
+- Cerchio: 100 · passato al centro: doppio
+- Cerchio d'oro (più piccolo e più basso): 250
+- Combo: ogni cerchio di fila alza il moltiplicatore (x1,25 … fino a x5); se ne manchi uno riparte da x1
+- Volo radente: sotto i 9 m guadagni punti di continuo, più scendi più ne prendi
+- Pareti a pochi metri dalle ali: punti extra
+- Sfiorare un ostacolo: da 120 a 480 punti, secondo quanto ci passi vicino; sotto un arco da 200 a 800
+- Turbo: i punti di rischio valgono una volta e mezza
+- Se tocchi terra, acqua, lava o un ostacolo, o resti fuori rotta per 5 secondi, il volo finisce.
+
+Stelle: 1 se arrivi al traguardo; 2 e 3 se superi due soglie di punti (la terza richiede di rischiare davvero).
+Finire un livello sblocca il successivo. Record e stelle restano salvati nel browser.
+
+
+LIVELLI
+-------
+1  Colline Verdi       mattino, colline, alberi e un vecchio acquedotto
+2  Canyon Rosso        tramonto, pareti strette, guglie e archi di roccia
+3  Città di Notte      grattacieli illuminati e ponti sospesi
+4  Fiordi di Ghiaccio  a pelo d'acqua tra iceberg e montagne innevate
+5  Bocca del Vulcano   laghi di lava, guglie nere, braci nell'aria
+
+Ogni livello è più lungo, più veloce e con cerchi più stretti del precedente.
+
+
+VERSIONI
+--------
+1.0  (21/11/2026)  Prima versione: 5 livelli, punteggio a rischio, combo, cerchi d'oro, turbo, stelle e record,
+                   comandi da tastiera e a tocco, suoni sintetizzati, pilota automatico di prova (#debug).
