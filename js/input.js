@@ -1,5 +1,7 @@
-// Comandi: tastiera (frecce / WASD, Spazio o Shift = turbo) e tocco (levetta virtuale + pulsante TURBO).
+// Comandi: tastiera (frecce / WASD, Spazio o Shift = turbo, F / E / Invio / clic = missile)
+// e tocco (levetta virtuale + pulsanti TURBO e FUOCO).
 const clamp = (v) => Math.max(-1, Math.min(1, v));
+const FIRE_KEYS = ['KeyF', 'KeyE', 'Enter', 'NumpadEnter', 'KeyX'];
 
 export class Input {
   constructor() {
@@ -9,12 +11,18 @@ export class Input {
     this.invert = false;
     this.joy = { active: false, id: null, ox: 0, oy: 0, x: 0, y: 0 };
     this.boostTouch = false;
+    this.fireQueued = false;      // un colpo richiesto e non ancora usato
+    this.fireEnabled = false;     // il clic sullo schermo spara solo durante il volo
     this.onKey = null;
 
     addEventListener('keydown', (e) => {
       const tg = e.target && e.target.tagName;
       if (tg === 'INPUT' || tg === 'TEXTAREA') { if (e.code === 'Escape' && this.onKey) this.onKey(e.code); return; }
       if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'Space'].includes(e.code)) e.preventDefault();
+      if (FIRE_KEYS.includes(e.code) && this.fireEnabled) {
+        e.preventDefault();
+        if (!e.repeat) this.fireQueued = true;
+      }
       if (!e.repeat && this.onKey) this.onKey(e.code);
       this.keys.add(e.code);
     });
@@ -22,7 +30,12 @@ export class Input {
     addEventListener('blur', () => { this.keys.clear(); this.boostTouch = false; this.joy.active = false; });
   }
 
-  bindTouch(zone, base, knob, boostBtn) {
+  // clic sinistro sul disegno del gioco = missile
+  bindMouse(canvas) {
+    canvas.addEventListener('mousedown', (e) => { if (e.button === 0 && this.fireEnabled) this.fireQueued = true; });
+  }
+
+  bindTouch(zone, base, knob, boostBtn, fireBtn) {
     const RAD = 62;
     const show = (on) => { base.style.opacity = on ? '1' : '0.35'; };
     const place = (x, y) => { base.style.left = x + 'px'; base.style.top = y + 'px'; };
@@ -61,6 +74,13 @@ export class Input {
     boostBtn.addEventListener('touchstart', bOn, { passive: false });
     boostBtn.addEventListener('touchend', bOff, { passive: false });
     boostBtn.addEventListener('touchcancel', bOff, { passive: false });
+
+    if (fireBtn) {
+      fireBtn.addEventListener('touchstart', (e) => { e.preventDefault(); if (this.fireEnabled) this.fireQueued = true; fireBtn.classList.add('on'); }, { passive: false });
+      const fOff = (e) => { e.preventDefault(); fireBtn.classList.remove('on'); };
+      fireBtn.addEventListener('touchend', fOff, { passive: false });
+      fireBtn.addEventListener('touchcancel', fOff, { passive: false });
+    }
   }
 
   update(dt) {
@@ -77,5 +97,8 @@ export class Input {
     this.boost = k.has('Space') || k.has('ShiftLeft') || k.has('ShiftRight') || this.boostTouch;
   }
 
-  reset() { this.ax = this.ay = 0; this.x = this.y = 0; }
+  // vero una volta per ogni pressione del tasto/pulsante di fuoco
+  consumeFire() { const f = this.fireQueued; this.fireQueued = false; return f; }
+
+  reset() { this.ax = this.ay = 0; this.x = this.y = 0; this.fireQueued = false; }
 }

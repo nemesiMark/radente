@@ -2,8 +2,9 @@ RADENTE
 =======
 
 Gioco di volo 3D che gira nel browser, su computer e su telefono.
-Piloti un piccolo aereo: devi passare dentro i cerchi nell'ordine, seguendo la scia di punti luminosi, fino al traguardo bianco.
+Piloti un jet con postbruciatore: devi passare dentro i cerchi nell'ordine, seguendo la scia luminosa, fino al traguardo a scacchi.
 Più rischi, più punti: volare a pochi metri da terra, passare vicino a pareti, alberi, rocce e palazzi, infilarsi sotto gli archi.
+Hai due missili che si ricaricano da soli: abbatti le mine rosse che galleggiano sulla rotta e le basi radar a terra.
 
 
 COME SI PROVA
@@ -17,9 +18,15 @@ poi apri http://localhost:8123 nel browser.
 
 COMANDI
 -------
-Computer:  frecce o W A S D per salire, scendere e virare · Spazio o Shift = turbo · Esc o P = pausa · R = ricomincia
-Telefono:  trascina il pollice nella metà sinistra dello schermo (levetta) · tieni premuto TURBO a destra · meglio in orizzontale
-Nel menu: «Comandi invertiti» (su = scendi, come un vero aereo), «Grafica leggera» per telefoni lenti, audio sì/no.
+Computer:  frecce o W A S D per salire, scendere e virare · Spazio o Shift = turbo · F, E, Invio o clic = missile
+           Esc o P = pausa · R = ricomincia
+Telefono:  trascina il pollice nella metà sinistra dello schermo (levetta) · a destra tieni premuto TURBO, tocca FUOCO
+           per il missile · meglio in orizzontale
+Nel menu: «Comandi invertiti» (su = scendi, come un vero aereo), «Grafica leggera» per telefoni lenti (cambiandola
+la pagina si ricarica), audio sì/no.
+
+Missili: punta il muso verso il bersaglio; quando la cornice diventa rossa con la scritta AGGANCIATO il missile
+lo insegue. Dopo il lancio ogni missile si ricarica in meno di 2 secondi.
 
 
 PUNTI
@@ -31,7 +38,8 @@ PUNTI
 - Pareti a pochi metri dalle ali: punti extra
 - Sfiorare un ostacolo: da 120 a 480 punti, secondo quanto ci passi vicino; sotto un arco da 200 a 800
 - Turbo: i punti di rischio valgono una volta e mezza
-- Se tocchi terra, acqua, lava o un ostacolo, o resti fuori rotta per 5 secondi, il volo finisce.
+- Mina abbattuta: 300 · base radar distrutta: 500 (tutti e due per il moltiplicatore della combo)
+- Se tocchi terra, acqua, lava, un ostacolo o una mina, o resti fuori rotta per 5 secondi, il volo finisce.
 
 Pilota e punteggi: prima di ogni partita dal menu il gioco chiede il nome del pilota (propone l'ultimo usato;
 Riprova e Livello successivo tengono lo stesso pilota). Ogni partita, arrivata o schiantata, finisce nello storico:
@@ -51,6 +59,21 @@ LIVELLI
 5  Bocca del Vulcano   laghi di lava, guglie nere, braci nell'aria
 
 Ogni livello è più lungo, più veloce e con cerchi più stretti del precedente.
+Mine e basi radar: 5 e 6 nel primo livello, poi sempre di più fino a 11 e 8 nel vulcano.
+
+
+GRAFICA
+-------
+- Jet con abitacolo riflettente, luci di navigazione e fiamma del postbruciatore; missili sotto le ali.
+- Cielo disegnato in tempo reale (nuvole che si muovono, sole, luna e stelle in città), nebbia più fitta in basso
+  e più calda verso il sole, ombre vere, riflessi del cielo su acqua, ghiaccio, vetri e metallo.
+- Cerchi di energia luminosi, scia guida a frecce, acqua con onde e schiuma, lava che scorre, finestre e strade
+  con il traffico in città.
+- Bagliori (bloom), riflesso del sole nell'obiettivo, colori diversi per ogni livello, vignetta e grana leggera.
+- Turbo: onda d'urto, cono di vapore, fiamma lunga, linee di velocità, sfocatura ai bordi e telecamera che si allarga.
+- Esplosioni con palla di fuoco, fumo, scintille, detriti, onda d'urto e scossone della telecamera.
+- «Grafica leggera»: meno particelle, ombre e bagliori più semplici. Se il gioco rallenta, la risoluzione si abbassa
+  da sola un poco.
 
 
 VERSIONI
@@ -60,3 +83,8 @@ VERSIONI
 1.1  (21/11/2026)  Nome del pilota chiesto prima di ogni partita; storico di tutti i punteggi con pulsante «Punteggi»
                    nel menu e file punteggi-radente.txt da scaricare.
 1.2  (21/11/2026)  Tolto il pulsante «Cancella storico»: lo storico dei punteggi non si può cancellare dal gioco.
+2.0  (22/11/2026)  Grafica rifatta da capo (stessi livelli, stessi percorsi e stessi ostacoli): jet con postbruciatore,
+                   cielo con nuvole, nebbia atmosferica, ombre, riflessi, acqua e lava animate, cerchi di energia,
+                   bagliori e colori per ogni livello. Turbo molto più spettacolare. Nuovi missili (F, E, Invio, clic o
+                   FUOCO) con aggancio del bersaglio, mine sulla rotta e basi radar a terra da abbattere.
+                   Menu e HUD ridisegnati, anche per telefono in orizzontale e in verticale.

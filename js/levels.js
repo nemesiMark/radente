@@ -1,5 +1,8 @@
 // Livelli di Radente: ogni livello ha la sua ambientazione, il suo percorso e i suoi ostacoli.
 // Altezze in metri (1 unità = 1 metro). Colori in esadecimale.
+// "look" è solo grafica: esposizione, bagliori (bloom: forza, raggio, soglia), colori finali, nuvole del cielo,
+// sole/luna, nebbia (fog: quota di base, spessore, luce del sole nella nebbia, densità relativa).
+// "targets": quante mine sulla rotta e quante basi radar a terra.
 
 export const LEVELS = [
   {
@@ -23,6 +26,14 @@ export const LEVELS = [
     obstacles: { trees: 650, arches: 3 },
     archColor: '#c2b294',
     accent: '#ffb02e',
+    targets: { mines: 5, bases: 6 },
+    look: {
+      exposure: 0.82, bloom: [0.5, 0.5, 0.96], sat: 1.1, contrast: 1.05, tint: '#fffaf0', vignette: 0.3, grain: 0.022,
+      flare: 0.9, flareColor: '#ffe2b0', sunSize: 0.99962, sunHDR: 12, horizonGlow: 0.14,
+      clouds: { cover: 0.42, scale: 0.8, alpha: 0.92, color: '#ffffff', shade: '#a9b9cc' },
+      rock: '#7d7a70', rockAmt: 0.75, meadow: '#94c24e', ground: '#6f8f55', cloudShade: '#aab8c8',
+      fog: [25, 140, 0.6, 0.6],
+    },
   },
   {
     id: 'canyon',
@@ -46,6 +57,14 @@ export const LEVELS = [
     obstacles: { pillars: 46, arches: 6 },
     archColor: '#b85a3a',
     accent: '#ff7a3d',
+    targets: { mines: 7, bases: 7 },
+    look: {
+      exposure: 1.0, bloom: [0.65, 0.55, 0.92], sat: 1.06, contrast: 1.05, tint: '#fff2e4', vignette: 0.38, grain: 0.03,
+      flare: 1.0, flareColor: '#ffc890', sunSize: 0.9995, sunHDR: 14, horizonGlow: 0.25,
+      clouds: { cover: 0.32, scale: 0.7, alpha: 0.85, color: '#ffd2b0', shade: '#9a6a78' },
+      rock: '#8a4a32', rockAmt: 0.45, ground: '#b86a40', cloudShade: '#a87a80',
+      fog: [30, 120, 0.75, 0.6],
+    },
   },
   {
     id: 'citta',
@@ -68,6 +87,14 @@ export const LEVELS = [
     obstacles: { buildings: true, bridges: 6 },
     archColor: '#4a4f6a',
     accent: '#ff4fd8',
+    targets: { mines: 8, bases: 7 },
+    look: {
+      exposure: 0.85, bloom: [0.9, 0.6, 0.78], sat: 1.1, contrast: 1.06, tint: '#f6f2ff', lift: '#030209', vignette: 0.45, grain: 0.04,
+      flare: 0.25, flareColor: '#c8c0ff', sunSize: 0.99975, sunHDR: 5, moon: true, horizonGlow: 0.35,
+      clouds: { cover: 0.28, scale: 0.6, alpha: 0.55, color: '#3a3060', shade: '#151228' },
+      ground: '#0d0e16',
+      fog: [0, 80, 0.3, 0.75],
+    },
   },
   {
     id: 'fiordi',
@@ -85,12 +112,20 @@ export const LEVELS = [
     guide: '#fff0a0',
     speed: 62, radenteH: 9,
     palette: [[-14, '#12303f'], [-1, '#24505f'], [1.5, '#5f6870'], [25, '#4f5761'], [48, '#7d8792'], [62, '#e8f0f6'], [300, '#ffffff']],
-    water: { y: 0, color: '#1d5a78', opacity: 0.9 },
+    water: { y: 0, color: '#184a63', shallow: '#3a8794', opacity: 0.9 },
     dust: '#eaf7ff',
     clouds: 14, cloudColor: '#f4f7fa',
     obstacles: { icebergs: 110, arches: 3 },
     archColor: '#d4e9f4',
     accent: '#5fd4ff',
+    targets: { mines: 9, bases: 7 },
+    look: {
+      exposure: 0.86, bloom: [0.5, 0.5, 0.96], sat: 0.96, contrast: 1.05, tint: '#f4f9ff', vignette: 0.32, grain: 0.03,
+      flare: 0.7, flareColor: '#e8f4ff', sunSize: 0.9997, sunHDR: 10, horizonGlow: 0.2,
+      clouds: { cover: 0.55, scale: 0.9, alpha: 0.85, color: '#f4f7fa', shade: '#8c9aaa' },
+      rock: '#5a636d', rockAmt: 0.65, ground: '#3a5868', cloudShade: '#9aa8b8',
+      fog: [0, 60, 0.5, 0.62],
+    },
   },
   {
     id: 'vulcano',
@@ -114,5 +149,13 @@ export const LEVELS = [
     obstacles: { spires: 85, arches: 6 },
     archColor: '#2e2725',
     accent: '#ff6a2a',
+    targets: { mines: 11, bases: 8 },
+    look: {
+      exposure: 0.84, bloom: [0.85, 0.6, 0.82], sat: 0.98, contrast: 1.06, tint: '#fff1e8', lift: '#060100', vignette: 0.45, grain: 0.04,
+      flare: 0.8, flareColor: '#ffb070', sunSize: 0.9994, sunHDR: 8, horizonGlow: 0.4,
+      clouds: { cover: 0.6, scale: 0.7, alpha: 0.78, color: '#5a2a1a', shade: '#1a0806' },
+      rock: '#2a2422', rockAmt: 0.6, ground: '#2a0d06', cloudShade: '#3a1a12',
+      fog: [0, 70, 0.65, 0.65],
+    },
   },
 ];
