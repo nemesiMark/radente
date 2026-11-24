@@ -20,6 +20,11 @@ Dettagli e storico versioni in **LEGGIMI.txt**.
 - `js/plane.js`: modello del jet, fiamma, missili sotto le ali, ombra finta (solo grafica leggera). `js/input.js`: tastiera, mouse e comandi a tocco. `js/audio.js`: suoni sintetizzati.
 - `js/shade.js`: pezzi di shader in comune (rumore, nebbia atmosferica che sostituisce quella di three.js, limite della luce dei materiali). `js/post.js`: post-produzione (bloom, riflesso del sole, sfocatura del turbo, colori, vignetta). `js/fx.js`: particelle, esplosioni, onde d'urto, detriti, scie, linee di velocità.
 
+
+## App installabile (PWA)
+- `manifest.webmanifest`, `sw.js` (copia dei file per l'uso senza rete; cache `nemesi-radente-N`: **alzare `VERSIONE` in `sw.js` e aggiornare `FILE` quando si aggiungono o rinominano file**), `icone/` (`icona.svg` → PNG 180/192/512 a tutto quadrato), `installa.js` (uguale nelle quattro app di Nemesi Web: registra `sw.js` e con `?installa` nell'indirizzo mostra il riquadro per installare).
+- Il portfolio Nemesi Web porta a `…/?installa` con il link «Installa».
+
 ## Regole di lavoro
 - Rispondi sempre in italiano; LEGGIMI e commenti in italiano.
 - A ogni modifica: alza `VERSIONE` in `js/main.js` e aggiungi la voce in fondo a LEGGIMI.txt (sezione VERSIONI).

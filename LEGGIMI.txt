@@ -88,3 +88,6 @@ VERSIONI
                    bagliori e colori per ogni livello. Turbo molto più spettacolare. Nuovi missili (F, E, Invio, clic o
                    FUOCO) con aggancio del bersaglio, mine sulla rotta e basi radar a terra da abbattere.
                    Menu e HUD ridisegnati, anche per telefono in orizzontale e in verticale.
+2.1  (24/11/2026)  Si installa come app (computer, iPhone, Android): icona, schermo intero, funziona anche senza
+                   rete (sw.js tiene una copia dei file, anche di Three.js e dei caratteri). Aperto con ?installa
+                   (link «Installa» del portfolio Nemesi Web) mostra come installarlo (installa.js).
