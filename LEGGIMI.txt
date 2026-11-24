@@ -91,3 +91,9 @@ VERSIONI
 2.1  (24/11/2026)  Si installa come app (computer, iPhone, Android): icona, schermo intero, funziona anche senza
                    rete (sw.js tiene una copia dei file, anche di Three.js e dei caratteri). Aperto con ?installa
                    (link «Installa» del portfolio Nemesi Web) mostra come installarlo (installa.js).
+2.2  (24/11/2026)  Corretta l'installazione: il manifest aveva "id": "./", che per Chrome vale la radice di
+                   nemesimark.github.io, uguale per tutte le app di Nemesi Web; installare Radente sovrascriveva
+                   l'app Metal Gear (finestra col nome sbagliato). Ora "id": "/radente/".
+                   Più fluido sugli schermi Retina: tetto ai pixel disegnati (circa 1920×1080, 1 milione con la grafica
+                   leggera) e la risoluzione automatica ora scende anche quando i fotogrammi si alternano 16/33 ms
+                   (media buona ma gioco a scatti), senza poi risalire al gradino che li dava.

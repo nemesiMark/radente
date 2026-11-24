@@ -10,7 +10,7 @@ import { Post } from './post.js';
 import { FX, Ribbon } from './fx.js';
 import { Weapons } from './weapons.js';
 
-export const VERSIONE = '2.1';
+export const VERSIONE = '2.2';
 
 // la nebbia "atmosferica" sostituisce quella di three.js: va installata prima che si compili qualsiasi materiale
 installFog();
@@ -48,8 +48,10 @@ const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(70, innerWidth / innerHeight, 0.3, 6000);
 scene.add(camera);   // serve per le linee di velocità, che sono figlie della camera
 const MAX_PR = LOW ? 1 : 1.5;
+// tetto ai pixel disegnati: sugli schermi Retina grandi 1.5× voleva dire quasi 3 milioni di pixel e il gioco andava a scatti
+const MAX_PIX = LOW ? 1.0e6 : 2.1e6;
 let prScale = 1;     // scende da solo se il gioco rallenta
-const currentPR = () => Math.max(0.5, Math.min(devicePixelRatio || 1, MAX_PR) * prScale);
+const currentPR = () => Math.max(0.5, Math.min(devicePixelRatio || 1, MAX_PR, Math.sqrt(MAX_PIX / (innerWidth * innerHeight))) * prScale);
 renderer.setPixelRatio(currentPR());
 renderer.setSize(innerWidth, innerHeight);
 
@@ -871,7 +873,6 @@ document.addEventListener('gesturestart', (e) => e.preventDefault());
 /* ---------- ciclo principale ---------- */
 const DBG = { manual: false };   // con #debug il pilota automatico di prova può guidare tick() da solo
 const clock = new THREE.Clock();
-const perf = { acc: 0, n: 0, good: 0 };
 function frame() {
   requestAnimationFrame(frame);
   const raw = clock.getDelta();
@@ -884,17 +885,27 @@ function frame() {
 function render(dt) {
   if (post.enabled) post.render(dt); else renderer.render(scene, camera);
 }
-// risoluzione automatica: se per 2 secondi il gioco va sotto i ~43 fotogrammi al secondo si abbassa un poco,
-// se resta fluido per 6 secondi risale
+// risoluzione automatica. Non basta la media: a 60 Hz un gioco che alterna fotogrammi da 16 e da 33 ms ha una media
+// "buona" (~21 ms) ma si vede a scatti. Si contano quindi i fotogrammi lunghi rispetto al periodo dello schermo
+// (il più corto visto, così vale anche a 120 Hz): se in 2 secondi sono più dell'8%, o la media resta sotto
+// i ~43 fotogrammi al secondo, la risoluzione scende;
+// risale solo dopo 8 secondi puliti e mai fino al gradino che aveva già dato scatti.
+const perf = { acc: 0, good: 0, period: 1, ceil: 1, frames: [] };
 function adapt(raw) {
-  if (DBG.manual || raw > 0.25 || !['play', 'menu', 'countdown'].includes(mode)) return;
-  perf.acc += raw; perf.n++;
+  if (DBG.manual || raw > 0.25 || !['play', 'menu', 'countdown'].includes(mode)) { perf.frames.length = 0; return; }
+  perf.acc += raw; perf.frames.push(raw);
   if (perf.acc < 2) return;
-  const avg = perf.acc / perf.n;
-  perf.acc = perf.n = 0;
-  if (avg > 0.023 && prScale > 0.55) { prScale = Math.max(0.55, prScale - 0.15); perf.good = 0; resize(); }
-  else if (avg < 0.0175 && prScale < 1) { if (++perf.good >= 3) { prScale = Math.min(1, prScale + 0.1); perf.good = 0; resize(); } }
-  else perf.good = 0;
+  const sorted = perf.frames.slice().sort((a, b) => a - b);
+  perf.period = Math.min(perf.period, Math.max(1 / 250, sorted[Math.floor(sorted.length * 0.1)]));
+  const long = perf.frames.filter((t) => t > perf.period * 1.5).length / perf.frames.length;
+  const avg = perf.acc / perf.frames.length;   // anche sotto i ~43 fotogrammi al secondo costanti si scende
+  perf.acc = 0; perf.frames.length = 0;
+  if ((long > 0.08 || avg > 0.023) && prScale > 0.5) {
+    perf.ceil = Math.min(perf.ceil, prScale - 0.05);
+    prScale = Math.max(0.5, prScale - (long > 0.25 ? 0.2 : 0.1)); perf.good = 0; resize();
+  } else if (long < 0.01 && prScale + 0.05 < perf.ceil) {
+    if (++perf.good >= 4) { prScale = Math.min(perf.ceil, prScale + 0.05); perf.good = 0; resize(); }
+  } else perf.good = 0;
 }
 
 function tick(dt) {
