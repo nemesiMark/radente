@@ -212,7 +212,7 @@
 <script>
   // aperto con doppio clic (file://) i moduli JS non partono: invece di caricare all'infinito spiega cosa fare
   if (location.protocol === 'file:') document.getElementById('loadingTxt').innerHTML =
-    'Apri il gioco da <b>http://localhost:8123</b><br><small style="letter-spacing:.05em;text-transform:none">nel Terminale: cd ~/Desktop/Apps/radente &amp;&amp; python3 -m http.server 8123</small>';
+    'Apri il gioco da <b>http://localhost:8123</b><br><small style="letter-spacing:.05em;text-transform:none">nel Terminale, dalla cartella del gioco: python3 -m http.server 8123</small>';
 </script>
 <script type="module" src="js/main.js"></script>
 <script src="installa.js" data-nome="Radente" data-colore="#ffb02e" defer></script>

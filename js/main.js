@@ -10,7 +10,7 @@ import { Post } from './post.js';
 import { FX, Ribbon } from './fx.js';
 import { Weapons } from './weapons.js';
 
-export const VERSIONE = '2.2';
+export const VERSIONE = '2.3';
 
 // la nebbia "atmosferica" sostituisce quella di three.js: va installata prima che si compili qualsiasi materiale
 installFog();

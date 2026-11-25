@@ -10,7 +10,7 @@ Hai due missili che si ricaricano da soli: abbatti le mine rosse che galleggiano
 COME SI PROVA
 -------------
 Nel Terminale:
-  cd ~/Desktop/Apps/radente
+  cd ~/Documents/work/Apps/radente
   python3 -m http.server 8123
 poi apri http://localhost:8123 nel browser.
 (Aprire index.html con doppio clic non funziona: serve il piccolo server qui sopra.)
@@ -97,3 +97,5 @@ VERSIONI
                    Più fluido sugli schermi Retina: tetto ai pixel disegnati (circa 1920×1080, 1 milione con la grafica
                    leggera) e la risoluzione automatica ora scende anche quando i fotogrammi si alternano 16/33 ms
                    (media buona ma gioco a scatti), senza poi risalire al gradino che li dava.
+2.3  (25/11/2026)  Progetto spostato in ~/Documents/work/Apps/radente. Il messaggio che compare aprendo index.html
+                   con doppio clic non cita più la cartella: dice di lanciare il server «dalla cartella del gioco».

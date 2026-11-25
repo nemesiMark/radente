@@ -4,7 +4,7 @@ Gioco di volo 3D nel browser (computer e telefono). Piloti un jet che deve attra
 Dettagli e storico versioni in **LEGGIMI.txt**.
 
 - Online con GitHub Pages: https://nemesimark.github.io/radente/ (si aggiorna a ogni push su main).
-- Prova in locale: `cd ~/Desktop/Apps/radente && python3 -m http.server 8123` → http://localhost:8123 (serve un server: i moduli JS non partono aprendo il file con doppio clic).
+- Prova in locale: `cd ~/Documents/work/Apps/radente && python3 -m http.server 8123` → http://localhost:8123 (serve un server: i moduli JS non partono aprendo il file con doppio clic).
 - Prova automatica: aprendo http://localhost:8123/#debug c'è `window.__R` (`start(i)`, `tick(dt)`, `input`, `P`, `run`, `world()`, `weapons`, `render()`, `post`, `camera`, `renderer`) per far volare un pilota automatico e controllare che i percorsi siano volabili. Con `__R.dbg.manual = true` il gioco avanza solo con `tick()` (il pilota automatico può correre più veloce del tempo reale; le animazioni CSS invece restano in tempo reale).
 - Three.js 0.160.0 da jsDelivr (importmap in `index.html`, con `three/addons/` per la post-produzione), nessuna installazione.
 
